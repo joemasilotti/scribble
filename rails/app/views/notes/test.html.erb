@@ -1,0 +1,71 @@
+<style>
+  div[data-controller="notes"] {
+    div:first-of-type {
+      background-color: lightblue;
+    }
+    canvas {
+      width: 100%;
+      height: 70vh;
+      background-color: lightyellow;
+    }
+
+  }
+</style>
+<h1>Draw</h1>
+<div data-controller="notes">
+  <div>
+    <button data-action="click->notes#clear">Clear</button>
+    <button data-action="click->notes#toText">To text</button>
+    <span data-notes-target="message"></span>
+  </div>
+  <canvas data-notes-target="canvas"></canvas>
+</section>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const canvas = document.querySelector('[data-notes-target="canvas"]');
+    const message = document.querySelector('[data-notes-target="message"]')
+    const ctx = canvas.getContext('2d');
+    const lineWidth = 3;
+
+    canvas.width = canvas.clientWidth
+    canvas.height = canvas.clientHeight
+
+    let isPainting = false;
+    let startX;
+    let startY;
+
+    document.querySelector('[data-action="click->notes#clear"]').addEventListener('click', (e) => {
+      canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+      message.innerText = ''
+
+    });
+    document.querySelector('[data-action="click->notes#toText"]').addEventListener('click', async (e) => {
+      const worker = await Tesseract.createWorker('eng');
+      const ret = await worker.recognize(canvas);
+      const text = ret.data.text;
+      await worker.terminate();
+      message.innerText = text
+      console.log(text)
+    });
+
+    canvas.addEventListener('touchstart', (e) => {
+      isPainting = true;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    });
+    canvas.addEventListener('touchend', () => {
+      isPainting = false;
+      ctx.stroke();
+      ctx.beginPath();
+    });
+    canvas.addEventListener('touchmove', e => {
+      if (!isPainting) {
+        return;
+      }
+      ctx.lineWidth = lineWidth;
+      ctx.lineCap = 'round';
+      ctx.lineTo(e.touches[0].clientX - canvas.offsetLeft, e.touches[0].clientY - canvas.offsetTop);
+      ctx.stroke();
+    });
+  })
+</script>

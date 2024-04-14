@@ -1,0 +1,22 @@
+<style>
+  div[data-controller="notes"] {
+    div:first-of-type {
+      background-color: lightblue;
+    }
+    canvas {
+      width: 100%;
+      height: 70vh;
+      background-color: lightyellow;
+    }
+
+  }
+</style>
+<h1>Draw</h1>
+<div data-controller="notes">
+  <div>
+    <button data-action="click->notes#clear">Clear</button>
+    <button data-action="click->notes#toText">To text</button>
+    <span data-notes-target="message"></span>
+  </div>
+  <canvas data-notes-target="canvas"></canvas>
+</section>

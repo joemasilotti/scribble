@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "patterns": [
+        "",
+        "/",
+      ],
+      "properties": {
+        "disablePullToRefresh": "true"
+      }
+    },
+  ]
+}
